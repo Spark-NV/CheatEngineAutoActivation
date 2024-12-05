@@ -5,8 +5,8 @@ local addressList = getAddressList()
 
 function Launch()
   if not getProcessIDFromProcessName(proc) then
-    shellExecute(steamURL) -- Launches the game through Steam
-    sleep(8000) -- Wait up to 8 seconds to allow the process to start
+    shellExecute(steamURL)
+    sleep(8000)
   end
 
   local ticks = 0
@@ -45,7 +45,12 @@ function Launch()
     end
   end
 
-  print("Activation complete. Successfully activated " .. activationSuccessCount .. " out of " .. totalRecords .. " records")
+  while getProcessIDFromProcessName(proc) do
+    sleep(750)
+  end
+  
+  os.execute("taskkill /f /im cheatengine*")
+  
   return true
 end
 
