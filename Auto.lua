@@ -6,11 +6,11 @@ local addressList = getAddressList()
 function Launch()
   if not getProcessIDFromProcessName(proc) then
     shellExecute(steamURL)
-    sleep(8000)
+    sleep(8000) -- time to wait for process to start.
   end
 
   local ticks = 0
-  local maxTicks = 20000
+  local maxTicks = 20000 -- time to wait for process to hook before giving up.
   local tick = 100
   while process ~= proc and ticks &lt; maxTicks do
     openProcess(proc)
@@ -35,7 +35,7 @@ function Launch()
       end)
 
       if not verificationSuccess or not isEffectivelyActivated then
-        os.execute("taskkill /F /IM FFX.exe")
+        os.execute("taskkill /f /im FFX.exe")
         messageDialog("Cheat activation failed. Process will be terminated.", mtError, mbOK)
       os.execute("taskkill /f /im cheatengine*")
         return false
