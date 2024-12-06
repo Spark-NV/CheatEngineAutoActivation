@@ -35,7 +35,7 @@ function Launch()
       end)
 
       if not verificationSuccess or not isEffectivelyActivated then
-        os.execute("taskkill /f /im FFX.exe")
+        os.execute("taskkill /F /IM " .. proc)
         messageDialog("Cheat activation failed. Process will be terminated.", mtError, mbOK)
       os.execute("taskkill /f /im cheatengine*")
         return false
