@@ -1,6 +1,6 @@
   <LuaScript>
-local proc = "FFX.exe"
-local steamURL = "steam://rungameid/359870"
+local proc = "EXENAME.exe"
+local steamURL = "steam://rungameid/ID"
 local max_wait_time = 5000
 
 -- DO NOT MODIFY BELOW THIS LINE --
