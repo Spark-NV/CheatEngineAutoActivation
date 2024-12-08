@@ -1,16 +1,27 @@
   <LuaScript>
-local proc = "EXENAME.exe"
-local steamURL = "steam://rungameid/ID"
+local proc = "FFX.exe"
+local steamURL = "steam://rungameid/359870"
+local max_wait_time = 5000
+
+-- DO NOT MODIFY BELOW THIS LINE --
 local addressList = getAddressList()
+
+function Kill_CE()
+  os.execute("taskkill /F /IM cheatengine*")
+  end
+  
+function Kill_PROC()
+  os.execute("taskkill /F /IM " .. proc)
+  end
 
 function Launch()
   if not getProcessIDFromProcessName(proc) then
     shellExecute(steamURL)
-    sleep(8000) -- time to wait for process to start.
+    sleep(max_wait_time)
   end
 
   local ticks = 0
-  local maxTicks = 20000 -- time to wait for process to hook before giving up.
+  local maxTicks = max_wait_time
   local tick = 100
   while process ~= proc and ticks &lt; maxTicks do
     openProcess(proc)
@@ -18,39 +29,40 @@ function Launch()
     ticks = ticks + tick
   end
 
-  local activationSuccessCount = 0
   local totalRecords = addressList.Count
+  local activatedCount = 0
 
   for i = 0, totalRecords - 1 do
     local memRecord = addressList[i]
-    
+
     local activationSuccess, activationErr = pcall(function()
       memRecord.Active = true
     end)
 
-    local isEffectivelyActivated = false
     if activationSuccess then
-      local verificationSuccess, verificationErr = pcall(function()
-        isEffectivelyActivated = memRecord.Active
-      end)
+      sleep(500)
 
-      if not verificationSuccess or not isEffectivelyActivated then
-        os.execute("taskkill /F /IM " .. proc)
-        messageDialog("Cheat activation failed. Process will be terminated.", mtError, mbOK)
-      os.execute("taskkill /f /im cheatengine*")
+      if not memRecord.Active then
+        Kill_PROC()
+        messageDialog("Cheat activation failed on cheat #" .. i .. ". Process will be terminated.", mtError, mbOK)
+        Kill_CE()
         return false
+      else
+        activatedCount = activatedCount + 1
       end
-
-      activationSuccessCount = activationSuccessCount + 1
+    else
+      Kill_PROC()
+      messageDialog("Error during activation of cheat #" .. i .. ": " .. (activationErr or "unknown error") .. ". Process will be terminated.", mtError, mbOK)
+      Kill_CE()
+      return false
     end
   end
 
   while getProcessIDFromProcessName(proc) do
     sleep(750)
   end
-  
-  os.execute("taskkill /f /im cheatengine*")
-  
+
+  Kill_CE()
   return true
 end
 
